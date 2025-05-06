@@ -7,8 +7,13 @@
       <button type="submit">Tambah</button>
     </form>
 
+    <label>
+      <input type="checkbox" v-model="showOnlyUnfinished" />
+      Tampilkan hanya kegiatan yang belum selesai
+    </label>
+
     <ul>
-      <li v-for="(task, index) in tasks" :key="index">
+      <li v-for="(task, index) in filteredTasks" :key="index">
         <input type="checkbox" v-model="task.completed" @change="handleCheck(task)" />
         <span :class="{ done: task.completed }">{{ task.text }}</span>
         <button @click="removeTask(index)">Batal</button>
@@ -25,11 +30,19 @@ export default {
   data() {
     return {
       newTask: "",
+      showOnlyUnfinished: false,
       tasks: [
         { text: "Belajar VueJS", completed: false, showMessage: false },
         { text: "Mengerjakan tugas PBK", completed: false, showMessage: false }
       ]
     };
+  },
+  computed: {
+    filteredTasks() {
+      return this.showOnlyUnfinished
+        ? this.tasks.filter(task => !task.completed)
+        : this.tasks;
+    }
   },
   methods: {
     addTask() {
