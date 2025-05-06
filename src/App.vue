@@ -1,19 +1,18 @@
 <template>
   <div class="container">
-    <h1>Daftar Kegiatan</h1>
+    <h1><span class="header">Daftar Kegiatan</span></h1>
 
-    <form @submit.prevent="addTask">
+    <form @submit.prevent="addTask" class="form">
       <input v-model="newTask" placeholder="Tambahkan kegiatan baru" />
       <button type="submit">Tambah</button>
     </form>
 
-    <label>
-      <input type="checkbox" v-model="showOnlyUnfinished" />
-      Tampilkan hanya kegiatan yang belum selesai
-    </label>
+    <button class="filter-btn" @click="toggleFilter">
+      {{ showOnlyUnfinished ? 'Tampilkan Semua Kegiatan' : 'Tampilkan Belum Selesai' }}
+    </button>
 
     <ul>
-      <li v-for="(task, index) in filteredTasks" :key="index">
+      <li v-for="(task, index) in filteredTasks" :key="index" class="task-item">
         <input type="checkbox" v-model="task.completed" @change="handleCheck(task)" />
         <span :class="{ done: task.completed }">{{ task.text }}</span>
         <button @click="removeTask(index)">Batal</button>
@@ -31,10 +30,7 @@ export default {
     return {
       newTask: "",
       showOnlyUnfinished: false,
-      tasks: [
-        { text: "Belajar VueJS", completed: false, showMessage: false },
-        { text: "Mengerjakan tugas PBK", completed: false, showMessage: false }
-      ]
+      tasks: []
     };
   },
   computed: {
@@ -42,6 +38,20 @@ export default {
       return this.showOnlyUnfinished
         ? this.tasks.filter(task => !task.completed)
         : this.tasks;
+    }
+  },
+  mounted() {
+    const savedTasks = localStorage.getItem("tasks");
+    if (savedTasks) {
+      this.tasks = JSON.parse(savedTasks);
+    }
+  },
+  watch: {
+    tasks: {
+      handler(newTasks) {
+        localStorage.setItem("tasks", JSON.stringify(newTasks));
+      },
+      deep: true
     }
   },
   methods: {
@@ -61,31 +71,78 @@ export default {
           task.showMessage = false;
         }, 5000);
       }
+    },
+    toggleFilter() {
+      this.showOnlyUnfinished = !this.showOnlyUnfinished;
     }
   }
 };
 </script>
 
 <style>
+body {
+  background-image: url('https://wallpapercave.com/wp/wp4575212.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+  color: gold;
+}
+
 .container {
   max-width: 600px;
   margin: auto;
   padding: 20px;
+  background-color: rgba(40, 42, 43, 0.85);
+  border-radius: 12px;
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+  margin-top: 40px;
 }
+
+.header {
+  color: rgb(249, 245, 245);
+}
+
+input[type="text"] {
+  width: 70%;
+  padding: 8px;
+  color: gold;
+  background: #333;
+  border: 1px solid gold;
+}
+
+button {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: #444;
+  color: gold;
+  border: 1px solid gold;
+  cursor: pointer;
+}
+button:hover {
+  background-color: #666;
+}
+
+.task-item {
+  margin: 10px 0;
+  color: rgb(255, 255, 255);
+}
+
 .done {
   text-decoration: line-through;
   color: gray;
 }
+
 .message {
-  color: green;
+  color: rgb(144, 57, 57);
   font-size: 0.9em;
   margin-top: 5px;
 }
-input[type="text"] {
-  width: 70%;
-  padding: 8px;
-}
-button {
-  margin-left: 10px;
+
+.filter-btn {
+  margin-top: 10px;
+  background-color: #222;
 }
 </style>
