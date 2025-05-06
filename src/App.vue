@@ -9,7 +9,8 @@
 
     <ul>
       <li v-for="(task, index) in tasks" :key="index">
-        {{ task.text }}
+        <input type="checkbox" v-model="task.completed" />
+        <span :class="{ done: task.completed }">{{ task.text }}</span>
         <button @click="removeTask(index)">Batal</button>
       </li>
     </ul>
@@ -22,8 +23,8 @@ export default {
     return {
       newTask: "",
       tasks: [
-        { text: "Belajar ", completed: false },
-        { text: "Makan", completed: false }
+        { text: "Belajar VueJS", completed: false },
+        { text: "Mengerjakan tugas PBK", completed: false }
       ]
     };
   },
@@ -46,6 +47,10 @@ export default {
   max-width: 600px;
   margin: auto;
   padding: 20px;
+}
+.done {
+  text-decoration: line-through;
+  color: gray;
 }
 input[type="text"] {
   width: 70%;
