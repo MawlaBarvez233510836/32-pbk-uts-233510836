@@ -10,6 +10,7 @@
     <ul>
       <li v-for="(task, index) in tasks" :key="index">
         {{ task.text }}
+        <button @click="removeTask(index)">Batal</button>
       </li>
     </ul>
   </div>
@@ -22,7 +23,7 @@ export default {
       newTask: "",
       tasks: [
         { text: "Belajar ", completed: false },
-        { text: "makan", completed: false }
+        { text: "Makan", completed: false }
       ]
     };
   },
@@ -32,6 +33,9 @@ export default {
         this.tasks.push({ text: this.newTask, completed: false });
         this.newTask = "";
       }
+    },
+    removeTask(index) {
+      this.tasks.splice(index, 1);
     }
   }
 };
