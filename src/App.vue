@@ -9,9 +9,12 @@
 
     <ul>
       <li v-for="(task, index) in tasks" :key="index">
-        <input type="checkbox" v-model="task.completed" />
+        <input type="checkbox" v-model="task.completed" @change="handleCheck(task)" />
         <span :class="{ done: task.completed }">{{ task.text }}</span>
         <button @click="removeTask(index)">Batal</button>
+        <div v-if="task.showMessage" class="message">
+          Kegiatan ini sudah selesai
+        </div>
       </li>
     </ul>
   </div>
@@ -23,20 +26,28 @@ export default {
     return {
       newTask: "",
       tasks: [
-        { text: "Belajar VueJS", completed: false },
-        { text: "Mengerjakan tugas PBK", completed: false }
+        { text: "Belajar VueJS", completed: false, showMessage: false },
+        { text: "Mengerjakan tugas PBK", completed: false, showMessage: false }
       ]
     };
   },
   methods: {
     addTask() {
       if (this.newTask.trim() !== "") {
-        this.tasks.push({ text: this.newTask, completed: false });
+        this.tasks.push({ text: this.newTask, completed: false, showMessage: false });
         this.newTask = "";
       }
     },
     removeTask(index) {
       this.tasks.splice(index, 1);
+    },
+    handleCheck(task) {
+      if (task.completed) {
+        task.showMessage = true;
+        setTimeout(() => {
+          task.showMessage = false;
+        }, 5000);
+      }
     }
   }
 };
@@ -51,6 +62,11 @@ export default {
 .done {
   text-decoration: line-through;
   color: gray;
+}
+.message {
+  color: green;
+  font-size: 0.9em;
+  margin-top: 5px;
 }
 input[type="text"] {
   width: 70%;
